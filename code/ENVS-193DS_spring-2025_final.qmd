@@ -12,6 +12,7 @@ Link to the GitHub repository is [here](https://github.com/ellieschomberg/ENVS-1
 # Set Up
 
 ```{r set up}
+#| message: FALSE
 # reading in packages
 library(tidyverse)
 library(janitor)
@@ -22,20 +23,41 @@ library(DHARMa)
 library(MuMIn)
 
 # reading in data
-
+sst <- read.csv(here("data", "SST_update2023.csv"))
 ```
 
 # Problem 1. Research Writing
 
 ## a. Transparent statistical methods
 
+In part 1, they used a Pearson's r test. In part 2, they used an ANOVA.
+
 ## b. More information needed
 
+One additional piece of information that should be included in the results section is a post hoc test, like the Tukey's HSD. We know from the results of the ANOVA that at least two of the groups are different from each other, but not which ones. The Tukey's HSD would provide information as to which groups are significantly different from each other. In this example, a Tukey's HSD would be able to tell you which two sources between urban land, atmospheric deposition, fertilizer, wastewater treatment, and grassland were significantly different from each other in terms of average nitrogen load. Another additional piece of information that could be included in the results is the effect size, which quantifies how much the grouping variable affects the response variable. In this example, the effect size would tell whether the different sources had a negligible, small, medium, or large effect on the nitrogen load.
+
 ## c. Suggestions for rewriting
+
+Part 1:
+
+There is a [weak], moderate, strong] [positive, negative] relationship between the distance from headwater (km) and the annual total nitrogen load (kg/year) (Pearson's r = correlation coefficient, p = 0.03, $/alpha$ = significance level).
+
+Part 2:
+
+We found a [small, medium, large] difference ($/eta$ = effect size) between sources in average average nitrogen load (one way ANOVA, F(num df, denom df) = F-statistic, p = 0.02, $/alpha$ = significant level). On average (one of the significantly different sources) tended to have a [higher or lower] average nitrogen load than (other significantly different source) (ex results from Tukey's HSD (difference) kg/year, 95% CI: [value, value] kg/year.)
+
 
 # Problem 2. Data visualization
 
 ## a. Cleaning and summarizing
+
+```{r cleaning and summarizing}
+sst_clean <- sst |> 
+  
+  
+
+```
+
 
 ## b. Visualize the data
 
