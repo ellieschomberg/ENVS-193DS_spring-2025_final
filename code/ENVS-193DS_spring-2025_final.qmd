@@ -40,11 +40,11 @@ One additional piece of information that should be included in the results secti
 
 Part 1:
 
-There is a [weak], moderate, strong] [positive, negative] relationship between the distance from headwater (km) and the annual total nitrogen load (kg/year) (Pearson's r = correlation coefficient, p = 0.03, $/alpha$ = significance level).
+There is a [weak, moderate, strong] [positive, negative] relationship between the distance from headwater (km) and the annual total nitrogen load (kg/year) (Pearson's r = correlation coefficient, p = 0.03, $\alpha$ = significance level).
 
 Part 2:
 
-We found a [small, medium, large] difference ($/eta$ = effect size) between sources in average average nitrogen load (one way ANOVA, F(num df, denom df) = F-statistic, p = 0.02, $/alpha$ = significant level). On average (one of the significantly different sources) tended to have a [higher or lower] average nitrogen load than (other significantly different source) (ex results from Tukey's HSD (difference) kg/year, 95% CI: [value, value] kg/year.)
+We found a [small, medium, large] difference ($\eta^2$ = effect size) between sources in average average nitrogen load (one way ANOVA, F(num df, denom df) = F-statistic, p = 0.02, $\alpha$ = significant level). On average (one of the significantly different sources) tended to have a [higher or lower] average nitrogen load than (other significantly different source) (ex results from Tukey's HSD (difference) kg/year, 95% CI: [value, value] kg/year).
 
 
 # Problem 2. Data visualization
@@ -52,8 +52,18 @@ We found a [small, medium, large] difference ($/eta$ = effect size) between sour
 ## a. Cleaning and summarizing
 
 ```{r cleaning and summarizing}
-sst_clean <- sst |> 
-  
+sst_clean <- sst |>  # starting with sst data frame
+  mutate(
+    month = month(date, label = TRUE, abbr = TRUE) |> 
+              factor(levels = month.abb, ordered = TRUE),
+    year = year(date)) |> 
+  group_by(month, year) |>  
+  summarize(mean_monthy_sst = mean(temp, na.rm = TRUE))  |> 
+  ungroup() |> 
+  filter(year %in% c("2018", "2019", "2020", "2021", "2022", "2023")) |> 
+  mutate( year = as_factor(year),
+          year = fct_relevel(year,"2018", "2019", "2020", "2021", "2022", "2023")) |> 
+  select( year, month, mean_monthy_sst)
   
 
 ```
@@ -88,6 +98,8 @@ sst_clean <- sst |>
 # Problem 4. Affective and explanatory visualizations
 
 ## a. Comparing visualizations
+
+
 
 ## b. Sharing your affective visualization
 
