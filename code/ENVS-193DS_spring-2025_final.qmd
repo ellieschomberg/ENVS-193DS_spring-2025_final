@@ -24,6 +24,7 @@ library(MuMIn)
 
 # reading in data
 sst <- read.csv(here("data", "SST_update2023.csv"))
+nest_boxes <- read.csv(here("data", "occdist.csv"))
 ```
 
 # Problem 1. Research Writing
@@ -101,15 +102,67 @@ ggplot(data = sst_clean, # starting with sst_clean data frame
 
 # Problem 3. Data analysis
 
+```{r cleaning and wrangling}
+#| echo: false
+nest_boxes_clean <- nest_boxes |> # creating new object starting with nest_boxes data frame
+  clean_names() |> # cleaning column names
+  mutate(box_occupant = as_factor(box_occupant), # making the box occupant  a factor
+         box_occupant = fct_relevel(box_occupant,
+                                    "swift parrot", 
+                                    "common starling",
+                                    "tree martin",
+                                    "empty")) |> 
+  mutate(season = as_factor(season), # making the season a factor
+         season = fct_relevel(season,
+                              "2016",
+                              "2019")) |> 
+  select(box_occupant, edge_distance, season, sp, cs, e, tm) # selecting the columns of interest
+```
+
+```{r visualizing data}
+#| echo: false
+# what is the relationship between distance and occupancy for each species
+ggplot(data = nest_boxes_clean,
+       aes(x = box_occupant,
+           y = edge_distance,
+           color = box_occupant)) +
+  geom_jitter(width = 0.1,
+              height = 0,
+              shape = 21,
+              alpha = 0.6) +
+  stat_summary(geom = "point",
+               fun = mean,
+               size = 4)
+```
+
+
 ## a. Response variable
+
+In this data set, 0s and 1s represent absent and present, respectively. For example, if a Tree Martin was present, there would be a 1 in that column, and if there were none present, there would be a 0 in that column.
 
 ## b. Purpose of study
 
+In the context of this study, Swift Parrots are the main species of interest, as they are on the brink of extinction, and the next boxes are going to be used in theory to help their population recover. The other two species, the Common Starling and the Tree Martin are potential competitors that may interfere with the the nest boxes.
+
 ## c. Difference in "seasons"
+
+The two different "seasons" that were compared in this study were the years 2016 and 2019. 2016 was the year that the nest boxes were initially deployed, and the 2019 was 3 years after that event in 2019, a tree flowering event triggered a second Swift Parrot breeding event at the study site.
 
 ## d. Table of models
 
+| Model Number | Season | Edge Distance | Predictor List               |
+|:------------:|:------:|:-------------:|:----------------------------:|
+| 0            |        |               | no predictors (null model)   |
+| 1            |   X    |       X       | all predictors (full model)  |
+| 2            |   X    |               | Season                       |
+| 3            |        |       X       | Edge Distance                |
+
+
 ## e. Run the models
+
+```{r}
+
+```
 
 ## f. Check the diagnostics
 
@@ -127,7 +180,11 @@ ggplot(data = sst_clean, # starting with sst_clean data frame
 
 ## a. Comparing visualizations
 
+In Homework 2, I represented my data as a bar graph and a line graph, because I did not have many observations to go off of at that point. By the time I made my affective visualization in Homework 3, I had finished all of my data collection. My affective visualization is a paiting that looks like a swimming pool, but my unsderlying data is represented in a jitterplot.
 
+Some of the similarities that I see between my exploratory visualizations and my affective visualization is that they show the comparison between categories. Both the bar graph and the jitterplot in my affective visualization were used to compare the mean amount of sleep in hours between the different categories of swimming workouts that I completed.
 
-## b. Sharing your affective visualization
+Even though I did not have many observations in my intial exploratory visualization, I could see from the bar graph that the Aerobic workout lead to the highest average hours slept, and from my line graph, an increased distance in yards also lead to the highest amount of hours slept. I noticed similar patterns in my final affective visualization, where the Aerobic and Racing categories of swimming workouts had the highest means, both with an average of 7.8 hours. All of my data matched my predictions, that longer, more intense workouts lead me to sleep a greater amount of hours at night.
+
+One piece of feedback that I got during week 9 workshop was to include the individual data observations in my visualization. Before, I had just had a swimmer that I used to represent the mean in each category, by showing them at different places within a lane that represented a different category. I decided to add little bubbles to each of the lanes, which represent the individual data points, and I think adding this component really helped to make the visualization more effective.
 
