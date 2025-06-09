@@ -52,24 +52,52 @@ We found a [small, medium, large] difference ($\eta^2$ = effect size) between so
 ## a. Cleaning and summarizing
 
 ```{r cleaning and summarizing}
+#| message: FALSE
 sst_clean <- sst |>  # starting with sst data frame
   mutate(
-    month = month(date, label = TRUE, abbr = TRUE) |> 
-              factor(levels = month.abb, ordered = TRUE),
-    year = year(date)) |> 
-  group_by(month, year) |>  
-  summarize(mean_monthy_sst = mean(temp, na.rm = TRUE))  |> 
+    month = month(date, label = TRUE, abbr = TRUE) |>  # adding a column for months
+              factor(levels = month.abb, ordered = TRUE), # creating the months as an ordinal factor with name abbreviations
+    year = year(date)) |> # creating a column for years
+  group_by(month, year) |>  # grouping the data by month and year
+  summarize(mean_monthly_sst = mean(temp, na.rm = TRUE))  |> # creating the mean monthly sst column
   ungroup() |> 
-  filter(year %in% c("2018", "2019", "2020", "2021", "2022", "2023")) |> 
-  mutate( year = as_factor(year),
+  filter(year %in% c("2018", "2019", "2020", "2021", "2022", "2023")) |> # filtering to include 2018-2023
+  mutate( year = as_factor(year), # making the years a factor
           year = fct_relevel(year,"2018", "2019", "2020", "2021", "2022", "2023")) |> 
-  select( year, month, mean_monthy_sst)
-  
+  select( year, month, mean_monthly_sst) # selecting the columns of interest
 
+slice_sample(sst_clean, n=5) 
+str(sst_clean)
 ```
 
 
 ## b. Visualize the data
+
+```{r visualization}
+#| warning: FALSE
+ggplot(data = sst_clean, # starting with sst_clean data frame
+       aes(x= month, # x axis is month
+           y = mean_monthly_sst, # y axis is mean monthly sst
+           color = year, # color and group data by year
+           group = year)) +
+  geom_point() + # adding points
+  geom_line() + # addding lines
+  scale_color_manual(values = c("2023" = "steelblue4", # creating color gradient
+                                "2022" = "steelblue", 
+                                "2021" = "steelblue3", 
+                                "2020" = "steelblue2",  
+                                "2019" = "steelblue1", 
+                                "2018" = "lightskyblue")) +
+  labs(x = "Month", # renaming x axis
+       y = "Mean monthly sea surface temperature (°C)", # renaming y axis
+       color = "Year") + # renaming legend
+  theme(panel.background = element_blank(), # making background blank
+        panel.border = element_rect(color = "gray", fill = NA, linewidth = 1), # adding border
+        axis.line = element_blank(), # getting rid of gridlines
+        legend.position = c(0.05, 0.95), # moving legend to the top left inside the panel
+        legend.justification = c(0, 1))
+```
+
 
 # Problem 3. Data analysis
 
