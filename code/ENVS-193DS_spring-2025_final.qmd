@@ -122,6 +122,7 @@ nest_boxes_clean <- nest_boxes |> # creating new object starting with nest_boxes
 
 ```{r visualizing data}
 #| echo: false
+#| results: hide
 # what is the relationship between distance and occupancy for each species
 ggplot(data = nest_boxes_clean, # data is nest boxes clean
        aes(x = box_occupant, # x axis is box occupant
@@ -218,12 +219,13 @@ summary(model1)
 gtsummary::tbl_regression(model1,
                           exponentiate = TRUE)
 ```
-i 
+
 The best model as determined by Akaike's Information Criterion (AIC) is the model that includes both of the predictor variables, season and distance from the forest edge, to predict whether or not a Swift Parrot was present in the nest box.
 
 ## h. Visualize the model predictions
 
 ```{r model visualization}
+#| message: FALSE
 model1_predictions <- ggpredict(model1, # creating object for model 1 predictions
           terms = c("edge_distance", "season")) # predictor variables
 
@@ -262,6 +264,11 @@ ggplot(data = nest_boxes_clean, # start with next boxes clean data frame
 Data from Stojanovic Dejan et al. (2021) 'Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird.' Points represent individual oberservations of the presence or absence of a swift parrot in a nesting box. Ribbons represent the 95% confidence interval. Colors represent the season (Purple = 2016, Blue = 2019).
 
 ## j.. Calculate model predictions
+
+```{r model predictions}
+
+```
+
 
 ## k. Interpret your results
 
