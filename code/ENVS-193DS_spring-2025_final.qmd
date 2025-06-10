@@ -21,6 +21,7 @@ library(flextable)
 library(readxl)
 library(DHARMa)
 library(MuMIn)
+library(ggeffects)
 
 # reading in data
 sst <- read.csv(here("data", "SST_update2023.csv"))
@@ -122,15 +123,15 @@ nest_boxes_clean <- nest_boxes |> # creating new object starting with nest_boxes
 ```{r visualizing data}
 #| echo: false
 # what is the relationship between distance and occupancy for each species
-ggplot(data = nest_boxes_clean,
-       aes(x = box_occupant,
-           y = edge_distance,
-           color = box_occupant)) +
-  geom_jitter(width = 0.1,
+ggplot(data = nest_boxes_clean, # data is nest boxes clean
+       aes(x = box_occupant, # x axis is box occupant
+           y = edge_distance, # y axis is edge distance
+           color = box_occupant)) + # grouping by the different species
+  geom_jitter(width = 0.1, # adding points
               height = 0,
               shape = 21,
               alpha = 0.6) +
-  stat_summary(geom = "point",
+  stat_summary(geom = "point", # adding means
                fun = mean,
                size = 4)
 ```
@@ -160,17 +161,105 @@ The two different "seasons" that were compared in this study were the years 2016
 
 ## e. Run the models
 
-```{r}
+```{r models}
+#model 0: null model 
+model0 <- glm(sp ~ 1, # formula
+              data = nest_boxes_clean, # data set
+              family = "binomial") # binomial data
 
+# model 1: all predictors
+model1 <- glm(sp ~ edge_distance + season, # formula
+              data = nest_boxes_clean, # data set
+              family = "binomial") # binomial data
+
+# model 2: season
+model2 <- glm(sp ~ season, # formula
+              data = nest_boxes_clean, # data set
+              family = "binomial") # binomial data
+
+# model 3: edge distance
+model3 <- glm(sp ~ edge_distance, # formula
+              data = nest_boxes_clean, # data set
+              family = "binomial") # binomial data
 ```
 
 ## f. Check the diagnostics
 
+```{r diagnostics}
+# diagnostics for model 0
+plot(
+  simulateResiduals(model0))
+
+# diagnostics for model 1
+plot(
+  simulateResiduals(model1))
+
+# diagnostics for model 2
+plot(
+  simulateResiduals(model2))
+
+#diagnostics for model 3
+plot(
+  simulateResiduals(model3))
+```
+
+
 ## g. Select the best model
+
+```{r model selection}
+AICc(model0,
+     model1, # best model: all predictors
+     model2,
+     model3) |> 
+  arrange(AICc) # arranging output
+
+summary(model1)
+
+gtsummary::tbl_regression(model1,
+                          exponentiate = TRUE)
+```
+i 
+The best model as determined by Akaike's Information Criterion (AIC) is the model that includes both of the predictor variables, season and distance from the forest edge, to predict whether or not a Swift Parrot was present in the nest box.
 
 ## h. Visualize the model predictions
 
+```{r model visualization}
+model1_predictions <- ggpredict(model1, # creating object for model 1 predictions
+          terms = c("edge_distance", "season")) # predictor variables
+
+ggplot(data = nest_boxes_clean, # start with next boxes clean data frame
+       aes(x = edge_distance, # x axis is edge distance
+           y = sp)) + # y axis is swift parrot presence/absence
+  geom_point(aes(color = season), # adding points
+             size = 3,
+             alpha = 0.4) +
+  geom_ribbon(data = model1_predictions, # adding ribbon
+              aes(x = x,
+                  y = predicted,
+                  ymin = conf.low,
+                  ymax = conf.high,
+                  fill = group),
+                  alpha = 0.4) +
+  geom_line(data = model1_predictions, # adding line
+            aes(x = x,
+                y = predicted,
+                color = group)) +
+  scale_y_continuous(limits = c(0,1), # setting limits and only having 2 tick marks
+                     breaks = c(0, 1)) +
+  scale_color_manual(values = c("2016" = "mediumpurple", "2019" = "royalblue")) +
+  scale_fill_manual(values = c("2016" = "mediumpurple1", "2019" = "royalblue1")) +
+  labs(x = "Distance from the forest edge (m)", # renaming title, axis, legend
+       y = "Probability of box occupancy", 
+       title = "Swift Parrot",
+       color = "season",
+       fill = "season")
+```
+
+
 ## i. Write a caption for your figure
+
+**Figure 1. Probability of Swift Parrot nest box occupancy is higher in 2016 than 2019.**
+Data from Stojanovic Dejan et al. (2021) 'Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird.' Points represent individual oberservations of the presence or absence of a swift parrot in a nesting box. Ribbons represent the 95% confidence interval. Colors represent the season (Purple = 2016, Blue = 2019).
 
 ## j.. Calculate model predictions
 
