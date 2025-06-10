@@ -4,7 +4,7 @@
 
 ## General Information
 
-This is the repository for the Final assignment . In this assignment, I ... 
+This is the repository for the Final assignment . In this assignment, I critiqued and offered suggestions for a statistical results statement, recreated a data visualization representing monthly average sea surface temperatures, created a generalized linear model for data about Swift Parrot nest box occupancy, and reflected on the affective visualization I made for my personal data collection. 
 
 ## Data and file information
 
@@ -15,7 +15,8 @@ Code:
 - 
 
 Data:
-- `updated_personal_data.csv`: file for personal data collection
+- `SST_update2023.csv`: daily SST data for problem 2
+- `occdist.csv`: box occupancy data for problem 3
 
 ## Rendered output
 

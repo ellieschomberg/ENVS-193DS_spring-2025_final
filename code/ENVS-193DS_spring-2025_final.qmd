@@ -36,7 +36,7 @@ In part 1, they used a Pearson's r test. In part 2, they used an ANOVA.
 
 ## b. More information needed
 
-One additional piece of information that should be included in the results section is a post hoc test, like the Tukey's HSD. We know from the results of the ANOVA that at least two of the groups are different from each other, but not which ones. The Tukey's HSD would provide information as to which groups are significantly different from each other. In this example, a Tukey's HSD would be able to tell you which two sources between urban land, atmospheric deposition, fertilizer, wastewater treatment, and grassland were significantly different from each other in terms of average nitrogen load. Another additional piece of information that could be included in the results is the effect size, which quantifies how much the grouping variable affects the response variable. In this example, the effect size would tell whether the different sources had a negligible, small, medium, or large effect on the nitrogen load.
+One additional piece of information that should be included in the results section is a post hoc test, like Tukey's HSD. We know from the results of the ANOVA that at least two of the groups are different from each other, but not which ones. The Tukey's HSD would provide information as to which groups are significantly different from each other. In this example, a Tukey's HSD would be able to tell you which two sources between urban land, atmospheric deposition, fertilizer, wastewater treatment, and grassland were significantly different from each other in terms of average nitrogen load. Another additional piece of information that could be included in the results is the effect size, which quantifies how much the grouping variable affects the response variable. In this example, the effect size would tell whether the different sources had a negligible, small, medium, or large effect on the nitrogen load.
 
 ## c. Suggestions for rewriting
 
@@ -46,7 +46,7 @@ There is a [weak, moderate, strong] [positive, negative] relationship between th
 
 Part 2:
 
-We found a [small, medium, large] difference ($\eta^2$ = effect size) between sources in average average nitrogen load (one way ANOVA, F(num df, denom df) = F-statistic, p = 0.02, $\alpha$ = significant level). On average (one of the significantly different sources) tended to have a [higher or lower] average nitrogen load than (other significantly different source) (ex results from Tukey's HSD (difference) kg/year, 95% CI: [value, value] kg/year).
+We found a [small, medium, large] difference ($\eta^2$ = effect size) between sources in average nitrogen load (one way ANOVA, F(num df, denom df) = F-statistic, p = 0.02, $\alpha$ = significant level). On average (one of the significantly different sources) tended to have a [higher or lower] average nitrogen load than (other significantly different source) (ex results from Tukey's HSD (difference) kg/year, 95% CI: [value, value] kg/year).
 
 
 # Problem 2. Data visualization
@@ -122,7 +122,7 @@ nest_boxes_clean <- nest_boxes |> # creating new object starting with nest_boxes
 
 ```{r visualizing data}
 #| echo: false
-#| results: hide
+#| output: false
 # what is the relationship between distance and occupancy for each species
 ggplot(data = nest_boxes_clean, # data is nest boxes clean
        aes(x = box_occupant, # x axis is box occupant
@@ -140,15 +140,15 @@ ggplot(data = nest_boxes_clean, # data is nest boxes clean
 
 ## a. Response variable
 
-In this data set, 0s and 1s represent absent and present, respectively. For example, if a Tree Martin was present, there would be a 1 in that column, and if there were none present, there would be a 0 in that column.
+In this data set, 0s and 1s represent absence and presence, respectively. For example, if a Tree Martin was present, there would be a 1 in that column, and if there were none present, there would be a 0 in that column.
 
 ## b. Purpose of study
 
-In the context of this study, Swift Parrots are the main species of interest, as they are on the brink of extinction, and the next boxes are going to be used in theory to help their population recover. The other two species, the Common Starling and the Tree Martin are potential competitors that may interfere with the the nest boxes.
+In the context of this study, Swift Parrots are the main species of interest, as they are on the brink of extinction, and the next boxes are going to be used in theory to help their population recover. The other two species, the Common Starling and the Tree Martin are potential competitors that may interfere with the nest boxes.
 
 ## c. Difference in "seasons"
 
-The two different "seasons" that were compared in this study were the years 2016 and 2019. 2016 was the year that the nest boxes were initially deployed, and the 2019 was 3 years after that event in 2019, a tree flowering event triggered a second Swift Parrot breeding event at the study site.
+The two different "seasons" that were compared in this study were the years 2016 and 2019. 2016 was the year that the nest boxes were initially deployed, and 2019 was 3 years after. In 2019, a tree flowering event triggered a second Swift Parrot breeding event at the study site.
 
 ## d. Table of models
 
@@ -187,6 +187,7 @@ model3 <- glm(sp ~ edge_distance, # formula
 ## f. Check the diagnostics
 
 ```{r diagnostics}
+#| message: false
 # diagnostics for model 0
 plot(
   simulateResiduals(model0))
@@ -215,7 +216,11 @@ AICc(model0,
   arrange(AICc) # arranging output
 
 summary(model1)
+```
 
+```{r}
+#| echo: false
+#| results: hide
 gtsummary::tbl_regression(model1,
                           exponentiate = TRUE)
 ```
@@ -254,33 +259,55 @@ ggplot(data = nest_boxes_clean, # start with next boxes clean data frame
        y = "Probability of box occupancy", 
        title = "Swift Parrot",
        color = "season",
-       fill = "season")
+       fill = "season") +
+  theme(panel.background = element_blank(), # getting rid of background
+        axis.line = element_blank(), # getting rid of grid lines and ticks
+        axis.ticks = element_blank())
+
 ```
 
 
 ## i. Write a caption for your figure
 
-**Figure 1. Probability of Swift Parrot nest box occupancy is higher in 2016 than 2019.**
-Data from Stojanovic Dejan et al. (2021) 'Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird.' Points represent individual oberservations of the presence or absence of a swift parrot in a nesting box. Ribbons represent the 95% confidence interval. Colors represent the season (Purple = 2016, Blue = 2019).
+**Figure 1. Probability of Swift Parrot nest box occupancy is higher in 2016 than 2019 and at closer distances to the forest edge.**
+Data from Stojanovic, Dejan et al. (2021). Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird [Dataset]. Dryad. https://doi.org/10.5061/dryad.83bk3j9sb. Points represent individual observations of the presence or absence of a swift parrot in a nesting box. Lines represent the model predictions for Swift Parrot occupation. Ribbons represent the 95% confidence interval. Colors represent the season (Purple = 2016, Blue = 2019).
 
 ## j.. Calculate model predictions
 
 ```{r model predictions}
-
+# probability of occupancy at 0m in 2016
+ggpredict(model1,
+          terms = c("edge_distance [0]", "season [2016]"))
+# probability of occupancy at 900m in 2016
+ggpredict(model1,
+          terms = c("edge_distance [900]", "season [2016]"))
+# probability of occupancy at 0m in 2019
+ggpredict(model1,
+          terms = c("edge_distance [0]", "season [2019]"))
+# probability of occupancy at 900m in 2019
+ggpredict(model1,
+          terms = c("edge_distance [900]", "season [2019]"))
 ```
 
 
 ## k. Interpret your results
 
+Swift parrots tend to occupy nest boxes shortly after their deployment in their nesting sites, and at closer distances to the forest edge (Figure 1).
+
+In the 2016 season, the probability of a swift parrot occupying a nest box 0m from the forest edge is 0.48 (95% CI :[0.33, 0.64]]) and 900m from the forest edge is 0.12 (95% CI: [0.06, 0.24]). In the 2019 season, the probability of a swift parrot occupying a nest box 0m from the forest edge is 0.30 (95% CI: [0.18, 0.44]) and 900m from the forest edge is 0.06 (95% CI: [0.03, 0.13]).
+
+The occupancy trends of the Swift Parrot can be partly explained by the behavior of its common competitors. One of the Swift Parrot's competitors, the Tree Martin, tends to occupy the nest boxes at further distances away from the forest edge. In addition, their other competitor, the Common Starling, tend to occupy the older nest boxes. Because of this, Swift Parrots tend to occupy the newer nesting boxes that are closer to the edge of the forest.
+
+
 # Problem 4. Affective and explanatory visualizations
 
 ## a. Comparing visualizations
 
-In Homework 2, I represented my data as a bar graph and a line graph, because I did not have many observations to go off of at that point. By the time I made my affective visualization in Homework 3, I had finished all of my data collection. My affective visualization is a paiting that looks like a swimming pool, but my unsderlying data is represented in a jitterplot.
+In Homework 2, I represented my data as a bar graph and a line graph, because I did not have many observations to go off of at that point. By the time I made my affective visualization in Homework 3, I had finished all of my data collection. My affective visualization is a paiting that looks like a swimming pool, but my underlying data is represented in a jitterplot.
 
 Some of the similarities that I see between my exploratory visualizations and my affective visualization is that they show the comparison between categories. Both the bar graph and the jitterplot in my affective visualization were used to compare the mean amount of sleep in hours between the different categories of swimming workouts that I completed.
 
-Even though I did not have many observations in my intial exploratory visualization, I could see from the bar graph that the Aerobic workout lead to the highest average hours slept, and from my line graph, an increased distance in yards also lead to the highest amount of hours slept. I noticed similar patterns in my final affective visualization, where the Aerobic and Racing categories of swimming workouts had the highest means, both with an average of 7.8 hours. All of my data matched my predictions, that longer, more intense workouts lead me to sleep a greater amount of hours at night.
+Even though I did not have many observations in my initial exploratory visualization, I could see from the bar graph that the Aerobic workout lead to the highest average hours slept, and from my line graph, an increased distance in yards also lead to the highest amount of hours slept. I noticed similar patterns in my final affective visualization, where the Aerobic and Racing categories of swimming workouts had the highest means, both with an average of 7.8 hours. All of my data matched my predictions, that longer, more intense workouts lead me to sleep a greater amount of hours at night.
 
-One piece of feedback that I got during week 9 workshop was to include the individual data observations in my visualization. Before, I had just had a swimmer that I used to represent the mean in each category, by showing them at different places within a lane that represented a different category. I decided to add little bubbles to each of the lanes, which represent the individual data points, and I think adding this component really helped to make the visualization more effective.
+One piece of feedback that I got during week 9 workshop was to include the individual data observations in my visualization. Before, I had just had a swimmer that I used to represent the mean in each category, by showing them at different places within a lane that represented a different category. I decided to add little bubbles to each of the lanes, which represent the individual data points, and I think adding this component really helped to make the visualization more clear.
 
