@@ -140,11 +140,11 @@ ggplot(data = nest_boxes_clean, # data is nest boxes clean
 
 ## a. Response variable
 
-In this data set, 0s and 1s represent absence and presence, respectively. For example, if a Tree Martin was present, there would be a 1 in that column, and if there were none present, there would be a 0 in that column.
+In this data set, 0s and 1s represent absence and presence, respectively, of the different bird species in the nest boxes. For example, if a Tree Martin was present, there would be a 1 in that column, and if there were none present, there would be a 0 in that column.
 
 ## b. Purpose of study
 
-In the context of this study, Swift Parrots are the main species of interest, as they are on the brink of extinction, and the next boxes are going to be used in theory to help their population recover. The other two species, the Common Starling and the Tree Martin are potential competitors that may interfere with the nest boxes.
+In the context of this study, Swift Parrots are the target species, as they are on the brink of extinction, and the nest boxes are going to be used in theory to help their population recover. The other two species, the Common Starling and the Tree Martin, are potential competitors that may interfere with the nest boxes.
 
 ## c. Difference in "seasons"
 
@@ -215,14 +215,15 @@ AICc(model0,
      model3) |> 
   arrange(AICc) # arranging output
 
-summary(model1)
+
 ```
 
 ```{r}
 #| echo: false
-#| results: hide
+#| output: false
 gtsummary::tbl_regression(model1,
                           exponentiate = TRUE)
+summary(model1)
 ```
 
 The best model as determined by Akaike's Information Criterion (AIC) is the model that includes both of the predictor variables, season and distance from the forest edge, to predict whether or not a Swift Parrot was present in the nest box.
@@ -272,7 +273,7 @@ ggplot(data = nest_boxes_clean, # start with next boxes clean data frame
 **Figure 1. Probability of Swift Parrot nest box occupancy is higher in 2016 than 2019 and at closer distances to the forest edge.**
 Data from Stojanovic, Dejan et al. (2021). Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird [Dataset]. Dryad. https://doi.org/10.5061/dryad.83bk3j9sb. Points represent individual observations of the presence or absence of a swift parrot in a nesting box. Lines represent the model predictions for Swift Parrot occupation. Ribbons represent the 95% confidence interval. Colors represent the season (Purple = 2016, Blue = 2019).
 
-## j.. Calculate model predictions
+## j. Calculate model predictions
 
 ```{r model predictions}
 # probability of occupancy at 0m in 2016
